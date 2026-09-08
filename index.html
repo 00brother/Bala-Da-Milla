@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bala da Milla — Atelier de doces afetivos</title>
+  <meta name="description" content="Balas artesanais feitas à mão, com sabores, laços e detalhes pensados para celebrar o que importa.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --background: 40 33% 93%;
+      --foreground: 144 21% 22%;
+      --card: 40 30% 96%;
+      --card-foreground: 144 21% 22%;
+      --primary: 144 21% 22%;
+      --primary-foreground: 40 33% 93%;
+      --secondary: 40 18% 89%;
+      --secondary-foreground: 144 21% 22%;
+      --muted: 40 18% 89%;
+      --muted-foreground: 30 8% 42%;
+      --accent: 36 43% 52%;
+      --accent-foreground: 144 21% 22%;
+      --destructive: 12 57% 38%;
+      --destructive-foreground: 40 33% 93%;
+      --border: 36 15% 84%;
+      --shadow-sm: 0 2px 8px rgba(44,66,53,0.06);
+      --shadow-md: 0 8px 28px rgba(44,66,53,0.10);
+      --shadow-lg: 0 24px 60px rgba(44,66,53,0.14);
+    }
+
+    * { -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: hsl(var(--background));
+      color: hsl(var(--foreground));
+    }
+
+    .font-display { font-family: 'Playfair Display', serif; }
+
+    /* Grain texture */
+    .grain::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* Reveal animation */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1), transform 0.8s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+    /* Image frame */
+    .image-frame { overflow: hidden; }
+    .image-frame img { transition: transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .image-frame:hover img { transform: scale(1.04); }
+
+    /* Solid button */
+    .solid-button { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .solid-button:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+    /* Line link */
+    .line-link { position: relative; transition: color 0.3s ease; }
+    .line-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 100%; height: 1px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.4s ease;
+    }
+    .line-link:hover::after { transform: scaleX(1); transform-origin: left; }
+
+    /* Nav link */
+    .nav-link { position: relative; transition: color 0.3s ease; }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0; right: 0;
+      height: 1px;
+      background: hsl(var(--destructive));
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.35s ease;
+    }
+    .nav-link:hover::after { transform: scaleX(1); transform-origin: left; }
+
+    /* Smooth scroll */
+    html { scroll-behavior: smooth; }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: hsl(var(--background)); }
+    ::-webkit-scrollbar-thumb { background: hsl(var(--accent)); border-radius: 4px; }
+
+    /* Form inputs */
+    .form-input {
+      width: 100%;
+      background: transparent;
+      border: 1px solid hsl(var(--border));
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      color: hsl(var(--primary));
+      transition: border-color 0.3s ease;
+      outline: none;
+    }
+    .form-input:focus { border-color: hsl(var(--accent)); }
+    .form-input::placeholder { color: hsl(var(--muted-foreground)); }
+    select.form-input { appearance: none; cursor: pointer; }
+  </style>
+</head>
+<body class="grain">
+
+  <!-- Navigation -->
+  <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-500" id="navbar">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-12">
+      <a href="#inicio" class="flex items-center gap-3">
+        <span class="flex h-10 w-10 items-center justify-center rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--card))] font-display text-sm font-semibold text-[hsl(var(--primary))]">MF</span>
+        <span class="font-display text-lg font-medium tracking-tight text-[hsl(var(--primary))]">Milla Fonseca</span>
+      </a>
+      <nav class="hidden items-center gap-8 lg:flex">
+        <a href="#historia" class="nav-link text-[.68rem] font-semibold uppercase tracking-[.18em] text-[hsl(var(--primary))]">A história</a>
+        <a href="#criacoes" class="nav-link text-[.68rem] font-semibold uppercase tracking-[.18em] text-[hsl(var(--primary))]">Criações</a>
+        <a href="#cuidado" class="nav-link text-[.68rem] font-semibold uppercase tracking-[.18em] text-[hsl(var(--primary))]">O cuidado</a>
+        <a href="#feedbacks" class="nav-link text-[.68rem] font-semibold uppercase tracking-[.18em] text-[hsl(var(--primary))]">Feedbacks</a>
+      </nav>
+      <a href="#pedido" class="solid-button inline-flex items-center gap-2 rounded-full bg-[hsl(var(--primary))] px-5 py-2.5 text-[.68rem] font-semibold uppercase tracking-[.14em] text-[hsl(var(--primary-foreground))]">
+        Fazer um pedido
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+      </a>
+    </div>
+  </header>
+
+  <main class="site-shell min-h-[100dvh]">
+
+    <!-- Hero -->
+    <section id="inicio" class="relative mx-auto grid min-h-[760px] max-w-7xl items-center gap-10 px-5 pb-20 pt-36 sm:px-8 lg:grid-cols-[.92fr_1.08fr] lg:gap-16 lg:px-12 lg:pb-28 lg:pt-44">
+      <div class="relative z-10 max-w-xl">
+        <p class="reveal mb-6 flex items-center gap-3 text-[.69rem] font-bold uppercase tracking-[.27em] text-[hsl(var(--muted-foreground))]">
+          <span class="h-px w-10 bg-[hsl(var(--accent))]"></span> Atelier de doces afetivos
+        </p>
+        <h1 class="reveal font-display text-[clamp(4.5rem,10vw,8.6rem)] font-medium leading-[.77] tracking-[-.055em] text-[hsl(var(--primary))]" style="transition-delay: 0.08s;">
+          Pequenos<br><em class="text-[hsl(var(--destructive))]">gestos,</em><br>grandes memórias.
+        </h1>
+        <p class="reveal mt-9 max-w-md text-[1rem] leading-7 text-[hsl(var(--muted-foreground))]" style="transition-delay: 0.16s;">
+          Balas artesanais feitas à mão, com sabores, laços e detalhes pensados para celebrar o que importa.
+        </p>
+        <div class="reveal mt-9 flex flex-wrap items-center gap-5" style="transition-delay: 0.24s;">
+          <a href="#pedido" class="solid-button inline-flex items-center gap-3 rounded-full bg-[hsl(var(--primary))] px-7 py-4 text-[.75rem] font-semibold uppercase tracking-[.16em] text-[hsl(var(--primary-foreground))]">
+            Encomendar minhas balas
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+          </a>
+          <a href="#criacoes" class="line-link text-[.75rem] font-semibold uppercase tracking-[.16em] text-[hsl(var(--primary))]">Ver criações</a>
+        </div>
+        <div class="reveal mt-16 flex items-center gap-4" style="transition-delay: 0.32s;">
+          <span class="font-display text-4xl italic text-[hsl(var(--accent))]">feito com tempo</span>
+          <span class="h-px w-14 bg-[hsl(var(--border))]"></span>
+          <span class="text-[.63rem] uppercase tracking-[.18em] text-[hsl(var(--muted-foreground))]">e intenção</span>
+        </div>
+      </div>
+      <div class="reveal relative mx-auto w-full max-w-[540px] lg:ml-auto" style="transition-delay: 0.18s;">
+        <div class="absolute -right-3 -top-4 z-10 flex h-[108px] w-[108px] rotate-6 items-center justify-center rounded-full bg-[hsl(var(--accent))] text-center text-[.65rem] font-bold uppercase leading-4 tracking-[.13em] text-[hsl(var(--primary))] shadow-[var(--shadow-sm)] sm:-right-7 sm:-top-7">desde<br>2022</div>
+        <div class="image-frame aspect-[.86] rounded-[11rem_11rem_1rem_1rem] border-[10px] border-[hsl(var(--card))] shadow-[var(--shadow-lg)] sm:border-[14px]">
+          <img alt="Milla Fonseca segurando caixas de balas artesanais" class="h-full w-full object-cover object-center" src="https://valuable-half-astronomy--perolacorchog50.replit.app/assets/mila_1788564936107-ughd4_Kf.jpeg">
+        </div>
+        <div class="absolute -bottom-7 -left-5 w-44 rotate-[-5deg] border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3 shadow-[var(--shadow-sm)] sm:-left-12">
+          <p class="font-display text-[1.65rem] leading-[.85] text-[hsl(var(--primary))]">um doce<br><em>abraço</em></p>
+          <div class="mt-3 h-px w-10 bg-[hsl(var(--accent))]"></div>
+        </div>
+      </div>
+      <a href="#historia" class="absolute bottom-7 left-1/2 hidden -translate-x-1/2 items-center gap-3 text-[.63rem] font-semibold uppercase tracking-[.2em] text-[hsl(var(--muted-foreground))] lg:flex">
+        role para conhecer
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg>
+      </a>
+    </section>
+
+    <!-- History -->
+    <section id="historia" class="border-y border-[hsl(var(--border)/.7)] bg-[hsl(var(--card)/.62)]">
+      <div class="mx-auto grid max-w-7xl gap-14 px-5 py-24 sm:px-8 lg:grid-cols-[.84fr_1.16fr] lg:items-center lg:gap-24 lg:px-12 lg:py-32">
+        <div class="reveal relative mx-auto w-full max-w-md lg:mx-0">
+          <div class="image-frame aspect-[.79] rounded-[.8rem_8rem_.8rem_8rem] shadow-[var(--shadow-md)]">
+            <img alt="Milla apresentando uma caixa de balas artesanais" class="h-full w-full object-cover object-center" src="https://valuable-half-astronomy--perolacorchog50.replit.app/assets/WhatsApp_Image_2026-09-04_at_18.54.44_1788564936108-p2vP3cCi.jpeg">
+          </div>
+          <div class="absolute -bottom-8 -right-5 w-40 border border-[hsl(var(--border))] bg-[hsl(var(--background))] p-4 sm:-right-10">
+            <p class="text-[.62rem] font-bold uppercase leading-4 tracking-[.16em] text-[hsl(var(--muted-foreground))]">Cada encomenda<br>tem uma história</p>
+            <p class="mt-3 font-display text-2xl leading-none text-[hsl(var(--destructive))]">e um nome</p>
+          </div>
+        </div>
+        <div>
+          <p class="reveal text-[.68rem] font-bold uppercase tracking-[.25em] text-[hsl(var(--destructive))]">A pessoa por trás do laço</p>
+          <h2 class="reveal mt-5 max-w-2xl font-display text-[clamp(3.2rem,6vw,6rem)] font-medium leading-[.84] tracking-[-.045em] text-[hsl(var(--primary))]" style="transition-delay: 0.08s;">Prazer,<br><em>eu sou a Milla.</em></h2>
+          <div class="reveal mt-9 max-w-xl space-y-5 text-[.96rem] leading-7 text-[hsl(var(--muted-foreground))]" style="transition-delay: 0.16s;">
+            <p>Comecei fazendo balas para as festas da família. Descobri ali que um doce pode carregar muito mais do que sabor: pode guardar carinho, surpresa e aquela vontade de fazer alguém sorrir.</p>
+            <p>Hoje, cada caixa sai do meu atelier com as mãos ocupadas e o coração tranquilo. Eu escolho os ingredientes, cozinho cada leva e finalizo cada fita como se fosse para alguém da minha própria casa.</p>
+          </div>
+          <div class="reveal mt-10 flex items-center gap-8 border-t border-[hsl(var(--border))] pt-6" style="transition-delay: 0.24s;">
+            <span class="font-display text-3xl italic text-[hsl(var(--primary))]">Milla Fonseca</span>
+            <span class="text-[.65rem] uppercase tracking-[.16em] text-[hsl(var(--muted-foreground))]">feito em Santos, SP</span>
+          </div>
+          <div class="reveal mt-7 flex flex-wrap items-center gap-x-5 gap-y-3" style="transition-delay: 0.3s;">
+            <span class="text-[.68rem] font-bold uppercase tracking-[.15em] text-[hsl(var(--destructive))]">Enviamos para todo o Brasil</span>
+            <a href="https://maps.app.goo.gl/xcwWNpWgKaoecQhw7" target="_blank" rel="noreferrer" class="line-link inline-flex items-center gap-2 text-[.68rem] font-bold uppercase tracking-[.15em] text-[hsl(var(--primary))]">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              Ver localização
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Creations -->
+    <section id="criacoes" class="mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
+      <div class="reveal flex flex-col justify-between gap-6 md:flex-row md:items-end">
+        <div>
+          <p class="text-[.68rem] font-bold uppercase tracking-[.25em] text-[hsl(var(--destructive))]">Para celebrar do seu jeito</p>
+          <h2 class="mt-4 max-w-2xl font-display text-[clamp(3.4rem,6vw,6.3rem)] font-medium leading-[.82] tracking-[-.05em] text-[hsl(var(--primary))]">Uma lembrança<br><em>com sabor de casa.</em></h2>
+        </div>
+        <p class="max-w-xs text-sm leading-6 text-[hsl(var(--muted-foreground))]">Do batizado ao casamento, da mesa de doces ao mimo de uma tarde qualquer.</p>
+      </div>
+      <div class="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-[1.16fr_.84fr] lg:grid-rows-[290px_235px]">
+        <figure class="reveal image-frame group relative min-h-[360px] overflow-hidden rounded-[.8rem] bg-[hsl(var(--secondary))] lg:row-span-2" style="transition-delay: 0.08s;">
+          <img alt="Caixas de balas artesanais de coco decoradas com laços brancos" class="h-full w-full object-cover object-center" src="https://valuable-half-astronomy--perolacorchog50.replit.app/assets/bala_1788564936105-BppZNLGF.jpeg">
+          <figcaption class="absolute bottom-5 left-5 right-5 z-10 flex items-end justify-between text-[hsl(var(--card))]">
+            <span class="font-display text-3xl">Caixas que chegam<br><em>vestidas para festa</em></span>
+            <span class="hidden text-[.63rem] uppercase tracking-[.16em] sm:block">01 / detalhe</span>
+          </figcaption>
+        </figure>
+        <figure class="reveal image-frame group relative min-h-[290px] overflow-hidden rounded-[.8rem] bg-[hsl(var(--secondary))]" style="transition-delay: 0.16s;">
+          <img alt="Balas artesanais embaladas em kits para presentear" class="h-full w-full object-cover object-center" src="https://valuable-half-astronomy--perolacorchog50.replit.app/assets/WhatsApp_Image_2026-09-05_at_10.22.53_1788615032436-C-nX-OMp.jpeg">
+          <figcaption class="absolute bottom-5 left-5 z-10 font-display text-3xl text-[hsl(var(--card))]">Um carinho<br><em>para levar.</em></figcaption>
+        </figure>
+        <div class="reveal flex min-h-[235px] flex-col justify-between rounded-[.8rem] bg-[hsl(var(--primary))] p-7 text-[hsl(var(--primary-foreground))]" style="transition-delay: 0.24s;">
+          <p class="font-display text-[2.2rem] leading-[.9]">Laços, tags e<br><em class="text-[hsl(var(--accent))]">cores sob medida.</em></p>
+          <div>
+            <p class="text-[.68rem] uppercase tracking-[.14em] text-[hsl(var(--primary-foreground)/.7)]">Sabores: coco · chocolate · nozes</p>
+            <a href="#pedido" class="line-link mt-4 inline-flex items-center gap-2 text-[.72rem] font-semibold uppercase tracking-[.14em] text-[hsl(var(--primary-foreground))]">
+              Conversar sobre minha ideia
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Process / Care -->
+    <section id="cuidado" class="border-y border-[hsl(var(--border)/.7)] bg-[hsl(var(--card)/.62)]">
+      <div class="mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
+        <div class="reveal max-w-2xl">
+          <p class="text-[.68rem] font-bold uppercase tracking-[.25em] text-[hsl(var(--destructive))]">O cuidado é parte da receita</p>
+          <h2 class="mt-4 font-display text-[clamp(3.2rem,6vw,6rem)] font-medium leading-[.84] tracking-[-.045em] text-[hsl(var(--primary))]">Do coco <em>à celebração.</em></h2>
+          <p class="mt-8 max-w-xl text-[.96rem] leading-7 text-[hsl(var(--muted-foreground))]">Uma encomenda Milla passa por poucas mãos. Por isso, cada etapa recebe o tempo que precisa — sem pressa, sem atalhos, com o capricho que você espera.</p>
+        </div>
+        <div class="mt-16 grid gap-10 sm:grid-cols-3 lg:gap-14">
+          <div class="reveal" style="transition-delay: 0.08s;">
+            <span class="font-display text-5xl italic text-[hsl(var(--accent))]">01</span>
+            <h3 class="mt-4 font-display text-2xl font-medium text-[hsl(var(--primary))]">Escolha</h3>
+            <p class="mt-3 text-sm leading-6 text-[hsl(var(--muted-foreground))]">A gente conversa sobre a ocasião, a paleta e a quantidade ideal para o seu momento.</p>
+          </div>
+          <div class="reveal" style="transition-delay: 0.16s;">
+            <span class="font-display text-5xl italic text-[hsl(var(--accent))]">02</span>
+            <h3 class="mt-4 font-display text-2xl font-medium text-[hsl(var(--primary))]">Preparo</h3>
+            <p class="mt-3 text-sm leading-6 text-[hsl(var(--muted-foreground))]">Cada receita é preparada em pequenas levas, para preservar a textura macia e o sabor de cada ingrediente.</p>
+          </div>
+          <div class="reveal" style="transition-delay: 0.24s;">
+            <span class="font-display text-5xl italic text-[hsl(var(--accent))]">03</span>
+            <h3 class="mt-4 font-display text-2xl font-medium text-[hsl(var(--primary))]">Encanto</h3>
+            <p class="mt-3 text-sm leading-6 text-[hsl(var(--muted-foreground))]">Cada caixa é montada, amarrada e conferida à mão antes de encontrar você.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="feedbacks" class="mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
+      <div class="reveal max-w-2xl">
+        <p class="text-[.68rem] font-bold uppercase tracking-[.25em] text-[hsl(var(--destructive))]">Quem já recebeu</p>
+        <h2 class="mt-4 font-display text-[clamp(3.2rem,6vw,6rem)] font-medium leading-[.84] tracking-[-.045em] text-[hsl(var(--primary))]">Carinho que <em>vira lembrança.</em></h2>
+        <p class="mt-8 max-w-xl text-[.96rem] leading-7 text-[hsl(var(--muted-foreground))]">Cada encomenda é feita para chegar bonita, gostosa e cheia de significado.</p>
+      </div>
+      <div class="mt-14 grid gap-6 md:grid-cols-3">
+        <figure class="reveal flex flex-col justify-between rounded-[.8rem] border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-8" style="transition-delay: 0.08s;">
+          <blockquote class="font-display text-[1.5rem] leading-[1.25] text-[hsl(var(--primary))]">"As balas chegaram lindas e muito gostosas. Todo mundo amou o cuidado da embalagem!"</blockquote>
+          <figcaption class="mt-6 text-[.68rem] font-bold uppercase tracking-[.16em] text-[hsl(var(--muted-foreground))]">Cliente Milla</figcaption>
+        </figure>
+        <figure class="reveal flex flex-col justify-between rounded-[.8rem] border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-8" style="transition-delay: 0.16s;">
+          <blockquote class="font-display text-[1.5rem] leading-[1.25] text-[hsl(var(--primary))]">"Pedi para uma comemoração e ficou exatamente do jeitinho que eu imaginava. Um capricho só."</blockquote>
+          <figcaption class="mt-6 text-[.68rem] font-bold uppercase tracking-[.16em] text-[hsl(var(--muted-foreground))]">Cliente Milla</figcaption>
+        </figure>
+        <figure class="reveal flex flex-col justify-between rounded-[.8rem] border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-8" style="transition-delay: 0.24s;">
+          <blockquote class="font-display text-[1.5rem] leading-[1.25] text-[hsl(var(--primary))]">"A apresentação deixou a mesa ainda mais especial. Dá para sentir o carinho em cada detalhe."</blockquote>
+          <figcaption class="mt-6 text-[.68rem] font-bold uppercase tracking-[.16em] text-[hsl(var(--muted-foreground))]">Cliente Milla</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Details -->
+    <section class="border-y border-[hsl(var(--border)/.7)] bg-[hsl(var(--card)/.62)]">
+      <div class="mx-auto grid max-w-7xl gap-14 px-5 py-24 sm:px-8 lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:gap-20 lg:px-12 lg:py-32">
+        <div class="reveal">
+          <p class="text-[.68rem] font-bold uppercase tracking-[.25em] text-[hsl(var(--destructive))]">Da nossa mesa para a sua</p>
+          <h2 class="mt-4 max-w-xl font-display text-[clamp(3.2rem,6vw,6rem)] font-medium leading-[.84] tracking-[-.045em] text-[hsl(var(--primary))]">A beleza mora <em>nos detalhes.</em></h2>
+          <p class="mt-8 max-w-md text-[.96rem] leading-7 text-[hsl(var(--muted-foreground))]">Sabe aquela lembrança que ninguém quer deixar na mesa? É esse o nosso objetivo. Uma embalagem bonita, um recheio que conforta e a sensação de que alguém pensou em cada convidado.</p>
+          <a href="https://www.instagram.com/baladamilla" target="_blank" rel="noreferrer" class="line-link mt-8 inline-flex items-center gap-2 text-[.72rem] font-semibold uppercase tracking-[.14em] text-[hsl(var(--primary))]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line></svg>
+            acompanhar @baladamilla
+          </a>
+        </div>
+        <div class="reveal relative mx-auto w-full max-w-md lg:mx-0" style="transition-delay: 0.12s;">
+          <div class="image-frame aspect-[.82] rounded-[.8rem_8rem_.8rem_8rem] shadow-[var(--shadow-md)]">
+            <img alt="Caixas de balas artesanais decoradas com laços brancos" class="h-full w-full object-cover object-center" src="https://valuable-half-astronomy--perolacorchog50.replit.app/assets/bala_1788564936105-BppZNLGF.jpeg">
+          </div>
+          <div class="absolute -top-5 -right-3 rotate-6 rounded-full bg-[hsl(var(--destructive))] px-5 py-2 text-[.62rem] font-bold uppercase tracking-[.14em] text-[hsl(var(--destructive-foreground))] sm:-right-6">feito à mão</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Order Form -->
+    <section id="pedido" class="mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
+      <div class="reveal max-w-2xl">
+        <p class="text-[.68rem] font-bold uppercase tracking-[.25em] text-[hsl(var(--destructive))]">Vamos criar juntos?</p>
+        <h2 class="mt-4 font-display text-[clamp(3.2rem,6vw,6rem)] font-medium leading-[.84] tracking-[-.045em] text-[hsl(var(--primary))]">A sua festa <em>começa aqui.</em></h2>
+        <p class="mt-8 max-w-xl text-[.96rem] leading-7 text-[hsl(var(--muted-foreground))]">Enviamos para todo o Brasil, com cuidado do nosso atelier em Santos.</p>
+      </div>
+      <div class="reveal mt-14 grid gap-10 lg:grid-cols-[.85fr_1.15fr] lg:gap-16" style="transition-delay: 0.12s;">
+        <div class="flex flex-col justify-between">
+          <div>
+            <p class="text-[.68rem] font-bold uppercase tracking-[.2em] text-[hsl(var(--accent))]">Pedido personalizado</p>
+            <h3 class="mt-3 font-display text-4xl font-medium text-[hsl(var(--primary))]">Monte seu pedido</h3>
+            <div class="mt-4 inline-flex items-center gap-2 rounded-full bg-[#25D366]/10 px-4 py-2 text-[.68rem] font-bold uppercase tracking-[.14em] text-[#128C7E]">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"></path></svg>
+              WhatsApp
+            </div>
+            <p class="mt-6 max-w-sm text-sm leading-6 text-[hsl(var(--muted-foreground))]">Escolha o sabor, a quantidade e preencha seu endereço. Tudo vai direto para a Milla, pronto para virar um orçamento.</p>
+          </div>
+          <a href="https://maps.app.goo.gl/xcwWNpWgKaoecQhw7" target="_blank" rel="noreferrer" class="line-link mt-10 inline-flex items-center gap-2 text-[.68rem] font-bold uppercase tracking-[.15em] text-[hsl(var(--primary))]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            Santos, São Paulo · ver no mapa
+          </a>
+        </div>
+        <form id="order-form" class="space-y-5 rounded-[.8rem] border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-7 shadow-[var(--shadow-sm)] sm:p-9">
+          <div>
+            <label class="mb-2 block text-[.68rem] font-bold uppercase tracking-[.14em] text-[hsl(var(--muted-foreground))]">Seu nome</label>
+            <input type="text" name="nome" placeholder="Como podemos te chamar?" class="form-input" required>
+          </div>
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label class="mb-2 block text-[.68rem] font-bold uppercase tracking-[.14em] text-[hsl(var(--muted-foreground))]">Sabor</label>
+              <select name="sabor" class="form-input" required>
+                <option value="">Selecione</option>
+                <option value="Coco">Coco</option>
+                <option value="Chocolate">Chocolate</option>
+                <option value="Nozes">Nozes</option>
+              </select>
+            </div>
+            <div>
+              <label class="mb-2 block text-[.68rem] font-bold uppercase tracking-[.14em] text-[hsl(var(--muted-foreground))]">Quantidade</label>
+              <input type="number" name="quantidade" placeholder="Ex: 50 balas" class="form-input" min="1" required>
+            </div>
+          </div>
+          <div class="pt-2">
+            <p class="text-[.68rem] font-bold uppercase tracking-[.14em] text-[hsl(var(--destructive))]">Endereço para entrega</p>
+          </div>
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label class="mb-2 block text-[.68rem] font-bold uppercase tracking-[.14em] text-[hsl(var(--muted-foreground))]">Tipo de moradia</label>
+              <select name="tipo" class="form-input" required>
+                <option value="">Selecione</option>
+                <option value="Casa">Casa</option>
+                <option value="Apartamento">Apartamento</option>
+              </select>
+            </div>
+            <div>
+              <label class="mb-2 block text-[.68rem] font-bold uppercase tracking-[.14em] text-[hsl(var(--muted-foreground))]">Número</label>
+              <input type="text" name="numero" placeholder="Ex: 123" class="form-input" required>
+            </div>
+          </div>
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label class="mb-2 block text-[.68rem] font-bold uppercase tracking-[.14em] text-[hsl(var(--muted-foreground))]">Rua</label>
+              <input type="text" name="rua" placeholder="Nome da rua" class="form-input" required>
+            </div>
+            <div>
+              <label class="mb-2 block text-[.68rem] font-bold uppercase tracking-[.14em] text-[hsl(var(--muted-foreground))]">Bairro</label>
+              <input type="text" name="bairro" placeholder="Nome do bairro" class="form-input" required>
+            </div>
+          </div>
+          <div>
+            <label class="mb-2 block text-[.68rem] font-bold uppercase tracking-[.14em] text-[hsl(var(--muted-foreground))]">Cidade</label>
+            <input type="text" name="cidade" placeholder="Sua cidade" class="form-input" required>
+          </div>
+          <button type="submit" class="solid-button mt-2 inline-flex w-full items-center justify-center gap-3 rounded-full bg-[hsl(var(--primary))] px-7 py-4 text-[.75rem] font-semibold uppercase tracking-[.16em] text-[hsl(var(--primary-foreground))]">
+            Enviar pedido no WhatsApp
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-[hsl(var(--border))]">
+      <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-5 py-12 sm:px-8 md:flex-row lg:px-12">
+        <div class="flex items-center gap-3">
+          <span class="flex h-10 w-10 items-center justify-center rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--card))] font-display text-sm font-semibold text-[hsl(var(--primary))]">MF</span>
+          <span class="font-display text-lg font-medium tracking-tight text-[hsl(var(--primary))]">Milla Fonseca</span>
+        </div>
+        <p class="text-center text-[.68rem] uppercase tracking-[.16em] text-[hsl(var(--muted-foreground))]">Atelier de doces afetivos · Santos, SP · desde 2022</p>
+        <a href="https://www.instagram.com/baladamilla" target="_blank" rel="noreferrer" class="line-link text-[.68rem] font-bold uppercase tracking-[.15em] text-[hsl(var(--primary))]">@baladamilla</a>
+      </div>
+    </footer>
+
+  </main>
+
+  <script>
+    // Reveal animation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 40) {
+        navbar.style.background = 'hsl(var(--background)/.85)';
+        navbar.style.backdropFilter = 'blur(12px)';
+        navbar.style.borderBottom = '1px solid hsl(var(--border)/.5)';
+      } else {
+        navbar.style.background = 'transparent';
+        navbar.style.backdropFilter = 'none';
+        navbar.style.borderBottom = 'none';
+      }
+    });
+
+    // Form submission -> WhatsApp
+    document.getElementById('order-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const fd = new FormData(this);
+      const msg = `Olá Milla! Meu nome é ${fd.get('nome')}.\n\nGostaria de encomendar:\n• Sabor: ${fd.get('sabor')}\n• Quantidade: ${fd.get('quantidade')} balas\n\nEndereço para entrega:\n• ${fd.get('tipo')} — ${fd.get('rua')}, ${fd.get('numero')}\n• Bairro: ${fd.get('bairro')}\n• Cidade: ${fd.get('cidade')}`;
+      window.open(`https://wa.me/5513000000000?text=${encodeURIComponent(msg)}`, '_blank');
+    });
+  </script>
+</body>
+</html>
